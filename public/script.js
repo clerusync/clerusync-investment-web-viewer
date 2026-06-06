@@ -5,7 +5,6 @@ let term = null;
 let socket = null;
 
 // Form Submit
-
 document
 .getElementById("loginForm")
 .addEventListener("submit", function(e){
@@ -17,7 +16,6 @@ document
 });
 
 // Enter Key
-
 document
 .getElementById("accessCode")
 .addEventListener("keypress", function(e){
@@ -30,7 +28,6 @@ document
 });
 
 // Password Toggle 
-
 document
 .getElementById("passwordToggle")
 .addEventListener("click", function(){
@@ -46,7 +43,6 @@ document
 });
 
 // Access Check
-
 function checkAccess(){
 
     const entered =
@@ -84,7 +80,6 @@ function checkAccess(){
 }
 
 // Terminal 
-
 function startTerminal(){
 
     term = new Terminal({
@@ -414,7 +409,7 @@ class NeonCyberLoginForm {
     }
 }
 
-// Initialize the cyber form when DOM is loaded
+// Initialise the cyber form when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new NeonCyberLoginForm();
 });
