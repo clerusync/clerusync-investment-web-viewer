@@ -58,7 +58,7 @@ function checkAccess(){
     if(entered !== ACCESS_CODE){
 
         error.textContent =
-            "Invalid_access_code_hint_dencode.com";
+            "Invalid_access_code hint=Rail_Fence_10_Button_Text dencode.com";
 
         return;
     }
