@@ -1,5 +1,5 @@
 // Login
-const ACCESS_CODE = "Iiils__oncinntaieACneto";
+const ACCESS_CODE = "Iiasaoncinoten_eltnii_C";
 
 let term = null;
 let socket = null;
