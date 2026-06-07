@@ -15,6 +15,8 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const SSH_CONFIG = {
   host: process.env.SSH_HOST,
@@ -28,100 +30,114 @@ const SSH_CONFIG = {
 
 let sshConnection = null;
 let sshStream = null;
-
+let rebooting = false;
 // Connecting SSH
 function connectSSH() {
 
-  console.log("Connecting to SSH...");
+  console.log("Connecting SSH...");
 
   sshConnection = new Client();
 
   sshConnection.on("ready", () => {
 
-    console.log("SSH ready");
+    console.log("SSH connection ready!");
+    rebooting = false;
 
-    // Open real terminal
-    sshConnection.shell({
-      term: "xterm-color",
-      cols: 120,
-      rows: 40
-    }, (err, stream) => {
+    sshConnection.exec(
+      `sudo systemctl stop apache2 && sudo systemctl disable apache2 && sudo systemctl start nginx && bash start.sh`,
+      (err, stream) => {
 
-      if (err) {
-        console.error("Shell error:", err);
-        return;
+        if (err) {
+          console.error("SSH exec error:", err);
+          return;
+        }
+
+        sshStream = stream;
+
+        stream.on("data", (data) => {
+          io.emit("terminal-output", data.toString());
+        });
+
+        stream.stderr.on("data", (data) => {
+          io.emit("terminal-output", data.toString());
+        });
+
+        stream.on("close", (code, signal) => {
+
+          console.log(`Remote process closed: ${code} ${signal}`);
+
+          if (!rebooting) {
+            rebooting = true;
+
+            console.log("Triggering remote reboot...");
+            // reboot after server ssh connection is lost
+            sshConnection.exec("sudo reboot", () => {
+              sshConnection.end();
+            });
+          }
+
+        });
+
       }
+    );
 
-      sshStream = stream;
-
-      // Forward all stdout
-      stream.on("data", (data) => {
-        io.emit("terminal-output", data.toString());
-      });
-
-      // Forward stderr
-      stream.stderr?.on("data", (data) => {
-        io.emit("terminal-output", data.toString());
-      });
-
-      stream.on("close", () => {
-        console.log("SSH shell closed");
-        sshConnection.end();
-      });
-
-      // Run your startup commands
-      stream.write(`sudo systemctl stop apache2\n`);
-      stream.write(`sudo systemctl disable apache2\n`);
-      stream.write(`sudo systemctl start nginx\n`);
-      stream.write(`bash start.sh\n`);
-
-    });
-
-    // Extra keepalive
+    // Keep alive
     setInterval(() => {
-      if (sshStream) {
-        sshStream.write("echo alive\n");
+      if (sshConnection) {
+        sshConnection.exec("echo alive", () => {});
       }
     }, 60000);
 
   });
 
   sshConnection.on("error", (err) => {
-    console.error("SSH error:", err);
+    console.error("SSH connection error:", err);
   });
 
   sshConnection.on("close", () => {
-    console.log("SSH closed. Reconnecting in 5 seconds...");
-    setTimeout(connectSSH, 5000);
+
+    console.log("SSH closed.");
+
+    if (rebooting) {
+      console.log("Server rebooting. Waiting 30 seconds before reconnect...");
+      setTimeout(connectSSH, 30000);
+    } else {
+      console.log("Reconnecting in 5 seconds...");
+      // Reconnect after 5s if needed
+      setTimeout(connectSSH, 5000);
+    }
+
   });
 
   sshConnection.connect(SSH_CONFIG);
 }
 
+// Start SSH connection
 connectSSH();
 
+// Socket.IO
 io.on("connection", (socket) => {
-  console.log("Viewer connected");
 
+  console.log("Viewer connected");
+  // No input allowed (read-only)
   socket.on("disconnect", () => {
     console.log("Viewer disconnected");
   });
+
 });
 
-app.use(express.json());
-
-// Validation endpoint
+// validation endpoint
 app.post("/api/check-access", (req, res) => {
-    const { code } = req.body;
+  const { code } = req.body;
 
-    if (code === process.env.ACCESS_CODE) {
-        return res.json({ success: true });
-    }
+  if (code === process.env.ACCESS_CODE) {
+      return res.json({ success: true });
+  }
 
-    return res.status(401).json({
-        success: false,
-        message: "Invalid access code"
-    });
+  return res.status(401).json({
+      success: false,
+      message: "Invalid access code"
+  });
 });
 
 server.listen(PORT, () => {
