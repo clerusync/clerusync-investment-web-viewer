@@ -1,6 +1,6 @@
 # Clerusync Investment Web Viewer 
 
-This application provides a web-based, read-only terminal viewer for streaming the output of a script running on a remote server via SSH. It uses Node.js, Express, Socket.IO, and `xterm.js` to create a live, in-browser console feed.
+This application provides a web-based, read-only terminal viewer for streaming the output of a script running on a remote server via SSH. It uses Node.js, Express, Socket.IO, `xterm.js` to create a live and in-browser console feed.
 
 ## How It Works
 
