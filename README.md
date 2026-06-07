@@ -57,6 +57,7 @@ The application consists of a Node.js backend and a HTML/JavaScript frontend.
     SSH_PORT=22
     SSH_USER=your_ssh_username
     SSH_PASS=your_ssh_password
+    ACCESS_CODE=your_access_code
     
     # Local Server Port
     PORT=3000
