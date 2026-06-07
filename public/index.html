@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css"> 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css"/>
 </head>
 <body>
@@ -29,6 +29,7 @@
             <form class="neon-form" id="loginForm" novalidate>
                 <div class="cyber-field">
                     <div class="field-frame">
+                        
                         <div class="field-border"></div>
                         <input type="password" id="accessCode" placeholder="Enter Access Code" autocomplete="off" required>
                         <label for="accessCode">
@@ -40,7 +41,7 @@
                 <button type="submit" class="neon-button">
                     <div class="btn-matrix"></div>
                     <span class="btn-text"> 
-                        [ Initialise_a_Connection ]
+                         Initialise_Server_Connection
                     </span>
                     <div class="btn-loader">
                         <div class="matrix-loader">
@@ -82,11 +83,16 @@
         </div>
     </div>
 </div>
+
 <div id="terminalContainer">
     <div id="terminal"></div>
 </div>
+
+<!-- Load libraries BEFORE custom code -->
 <script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
 <script src="/socket.io/socket.io.js"></script> 
-<script src="script.js"></script>
+<script src="script.js"></script>  
+</body>
+</html>
 </body>
 </html>
