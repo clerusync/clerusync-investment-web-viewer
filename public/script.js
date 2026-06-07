@@ -1,6 +1,4 @@
 // Login
-const ACCESS_CODE = "Iiasaoncinoten_eltnii_C";
-
 let term = null;
 let socket = null;
 
@@ -43,7 +41,7 @@ document
 });
 
 // Access Check
-function checkAccess(){
+async function checkAccess() {
 
     const entered =
         document.getElementById("accessCode")
@@ -55,28 +53,86 @@ function checkAccess(){
 
     error.textContent = "";
 
-    if(entered !== ACCESS_CODE){
+    try {
 
-        error.textContent =
-            "Invalid_access_code hint=Rail_Fence_10_Button_Text dencode.com";
+        const response = await fetch("/api/check-access", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                code: entered
+            })
+        });
 
-        return;
-    }
+        const result = await response.json();
 
-    document.getElementById("successMessage")
-        .style.display = "block";
+        //if (!result.success) {
 
-    setTimeout(() => {
+            //error.textContent =
+                //"Invalid_access_code hint=Rail_Fence_10_Button_Text dencode.com";
+                //Wait 10 seconds before page reload 
+                //setTimeout(() => {
+                    //location.reload();
+                //}, 10000);
+            //return;
+        //}
+        if (!result.success) {
 
-        document.getElementById("loginContainer")
-            .style.display = "none";
+            error.textContent =
+                "Invalid_access_code hint=Rail_Fence_10_Button_Text dencode.com";
+        
+            const button = document.querySelector(".neon-button");
+        
+            // Disable the button
+            button.disabled = true;
+            // Style with cursor
+            button.style.opacity = "0.5";
+            button.style.cursor = "not-allowed";
+        
+            // Start countdown
+            let seconds = 10;
+            button.textContent = `LOCKED_RELOADING_IN_${seconds}s`;
+        
+            const countdown = setInterval(() => {
+                seconds--;
+                // Reloading countdown in seconds
+                button.textContent = `LOCKED_RELOADING_IN_${seconds}s`;
+        
+                if (seconds <= 0) {
+                    // stop countdown
+                    clearInterval(countdown);
+                    // reload page 
+                    location.reload();        
+                }
+                // runs every second
+            }, 1000); 
+        
+            return;
+        }
 
-        document.getElementById("terminalContainer")
+        document.getElementById("successMessage")
             .style.display = "block";
 
-        startTerminal();
+        setTimeout(() => {
 
-    }, 1000);
+            document.getElementById("loginContainer")
+                .style.display = "none";
+
+            document.getElementById("terminalContainer")
+                .style.display = "block";
+
+            startTerminal();
+
+        }, 1000);
+
+    } catch (err) {
+
+        error.textContent =
+            "Server connection error";
+
+        console.error(err);
+    }
 }
 
 // Terminal 
@@ -409,7 +465,7 @@ class NeonCyberLoginForm {
     }
 }
 
-// Initialise the cyber form when DOM is loaded
+// Initialize the cyber form when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new NeonCyberLoginForm();
 });
