@@ -67,16 +67,6 @@ async function checkAccess() {
 
         const result = await response.json();
 
-        //if (!result.success) {
-
-            //error.textContent =
-                //"Invalid_access_code hint=Rail_Fence_10_Button_Text dencode.com";
-                //Wait 10 seconds before page reload 
-                //setTimeout(() => {
-                    //location.reload();
-                //}, 10000);
-            //return;
-        //}
         if (!result.success) {
 
             error.textContent =
