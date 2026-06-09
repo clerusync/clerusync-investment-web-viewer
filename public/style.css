@@ -146,19 +146,50 @@ body {
     border-radius: 50%;
 }
 
-.btn-red {
+/* Red, Yellow, Green and spacer header glowing bulbs */
+/* Red light bulb */
+.red-bulb {
+    width: 14px;
+    height: 14px; 
+    border-radius: 50%;
     background: #ff5555;
-    box-shadow: 0 0 8px rgba(255, 85, 85, 0.5);
-}
+    box-shadow:
+      0 0 6px #ff5555,
+      0 0 12px rgba(255, 85, 85, 0.5),
+      0 0 24px rgba(255, 85, 85, 0.5); 
+  }
 
-.btn-yellow {
+  /* Yellow light bulb */
+.yellow-bulb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
     background: #ffff55;
-    box-shadow: 0 0 8px rgba(250, 250, 250, 0.3);
-}
+    box-shadow:
+      0 0 6px #ffff55,
+      0 0 12px rgba(250, 250, 250, 0.3),
+      0 0 24px rgba(250, 250, 250, 0.3); 
+  }
 
-.btn-green {
-    background: #55ff55;
-    box-shadow: 0 0 8px rgba(85, 255, 85, 0.5);
+  /* Green light bulb */
+.green-bulb {
+    width: 14px;
+    height: 14px; 
+    border-radius: 50%;
+    background: #00ff7f;
+    box-shadow:
+      0 0 6px #00ff7f,
+      0 0 12px rgba(0, 255, 127, 0.7),
+      0 0 24px rgba(0, 255, 127, 0.5); 
+  }
+
+/* spacer bulb */
+.bulbs-spacing {
+    width: 14px;
+    height: 14px;
+    float: left;    
+    margin: 0 180px 0 0;
+    border-radius: 50%; 
 }
 
 .terminal-title {
